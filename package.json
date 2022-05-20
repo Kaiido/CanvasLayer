@@ -1,0 +1,25 @@
+{
+  "name": "CanvasLayer",
+  "version": "0.0.1",
+  "description": "A prototype of what could be a CanvasLayer interface for the HTML Canvas 2D API",
+  "keywords": [
+    "canvas",
+    "layer"
+  ],
+  "license": "MIT",
+  "repository": "Kaiido/CanvasLayer",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --ext mjs,js"
+  },
+  "files": [
+    "/CanvasLayer.mjs",
+    "/source/"
+  ],
+  "devDependencies": {
+    "eslint": "^8.5.0"
+  },
+  "dependencies": {
+    "path2d-inspection": "0.0.1"
+  }
+}

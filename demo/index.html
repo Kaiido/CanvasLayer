@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title></title>
+  <script>
+CanvasRenderingContext2D.prototype.reset ??= function reset() {
+  this.canvas.width += 0;
+};
+  </script>
+</head>
+<body>
+<canvas width="500" height="500"></canvas>
+<script type="module">
+import CanvasLayer from "../source/CanvasLayer.mjs";
+
+import { width, height } from "./settings.mjs";
+
+import backgroundLayer from "./background.mjs";
+import textLayer from "./text.mjs";
+
+const canvas = document.querySelector("canvas");
+const ctx = canvas.getContext("2d");
+
+let blur  = false;
+let timer = null
+canvas.onmousemove = (evt) => {
+  blur = true;
+  clearTimeout(timer);
+  timer = setTimeout(() => blur = false, 20);
+};
+
+
+Object.assign(canvas, { width, height });
+
+function anim(now) {
+  ctx.clearRect(0, 0, width, height);
+  ctx.renderLayer(backgroundLayer);
+  ctx.filter = blur ? `blur(${Math.floor((Math.random() * 2.5)) + 5}px)` : "none";
+  ctx.renderLayer(textLayer);
+  ctx.filter = "none";
+  requestAnimationFrame(anim);
+};
+requestAnimationFrame(anim);
+
+</script>
+</body>
+</html>
