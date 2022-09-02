@@ -2678,12 +2678,14 @@ function getMagicalSizeFromCommands(layer, target) {
 function renderLayer$1(target) {
   const { context, commands } = map.get(this);
   const { canvas } = context;
+
   const { width, height } = getMagicalSizeFromCommands(this, target);
   if (!width || !height) {
     return;
   }
   canvas.width = width;
   canvas.height = height;
+
   commands.forEach(([ type, key, args ]) => {
     switch (type) {
       case "method": context[key].call(context, ...args); break;
@@ -2705,7 +2707,16 @@ class CanvasLayer {
     const commands = [];
     const context  = canvas.getContext("2d");
     const renderer = renderLayer$1.bind(this);
-    map.set(this, { commands, context, renderer });
+    const layersList = new Set();
+    map.set(this, { commands, context, renderer, layersList });
+  }
+  clone() {
+    const newLayer = new CanvasLayer();
+    const { commands, layersList } = map.get(this);
+    const newMap = map.get(newLayer);
+    newMap.commands = commands.slice();
+    newMap.layersList = new Set(...layersList.entries());
+    return newLayer;
   }
 }
 methods.forEach((key) => {
@@ -2743,6 +2754,22 @@ attrs.forEach((key) => {
     }
   });
 });
+CanvasLayer.prototype.renderLayer = function (layer) {
+  const { commands, layersList } = map.get(this);
+  const othersList = map.get(layer).layersList;
+  [ ...othersList ].forEach((layer) => {
+    if (map.get(layer).layersList.has(this)) {
+      throw new TypeError("cyclic CanvasLayer value");
+    }
+    layersList.add(layer);
+  });
+  layersList.add(layer);
+  if (othersList.has(this) || layersList.has(this)) {
+    throw new TypeError("cyclic CanvasLayer value");
+  }
+  commands.push([ "method", "renderLayer", [ layer ] ]);
+};
+
 
 function renderLayer(layer) {
   map.get(layer).renderer.call(layer, this);

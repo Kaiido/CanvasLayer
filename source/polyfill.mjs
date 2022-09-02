@@ -70,14 +70,14 @@ CanvasLayer.prototype.renderLayer = function (layer) {
     if (map.get(layer).layersList.has(this)) {
       throw new TypeError("cyclic CanvasLayer value");
     }
-    layersList.add(layer)
+    layersList.add(layer);
   });
   layersList.add(layer);
   if (othersList.has(this) || layersList.has(this)) {
     throw new TypeError("cyclic CanvasLayer value");
   }
   commands.push([ "method", "renderLayer", [ layer ] ]);
-}
+};
 
 
 function renderLayer(layer) {
