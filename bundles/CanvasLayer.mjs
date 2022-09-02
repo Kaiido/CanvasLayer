@@ -2323,6 +2323,9 @@ function getPutImageDataBBox(args) {
  *
  */
 function buildMatrixString(args) {
+  if (args[0] instanceof DOMMatrix) {
+    return args[0].toString();
+  }
   return `matrix(${ args.slice(0, 6).join() })`;
 }
 const transforms = {
